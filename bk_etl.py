@@ -163,7 +163,7 @@ def etl_pipe_bulk(file):
                     timestamp = str(int(timestamp))
                     filename = '/datadrive/missed/missed_'+timestamp+'.csv'
                     x.to_csv(filename, sep = '\t', index=False)
-
+                    break
 
 
 
