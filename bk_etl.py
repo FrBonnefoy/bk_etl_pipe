@@ -24,6 +24,12 @@ driver='/opt/microsoft/msodbcsql17/lib64/libmsodbcsql-17.7.so.2.1'
 
 files= glob2.glob('/datadrive/**/booking16*.csv')
 
+def fillcountry(x):
+    if x is None:
+        return 'NO COUNTRY/ERROR'
+    else:
+        return x.split('/')[4].upper()
+
 
 def etl_pipe(file):
 
@@ -31,7 +37,7 @@ def etl_pipe(file):
         cnxn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
         cursor = cnxn.cursor()
         df = pd.read_csv(file, sep = '\t')
-        df['PAYS'] = df.apply(lambda x: x['url'].split('/')[4].upper(), axis=1)
+        df['PAYS'] = df.apply(lambda x: fillcountry(x['url']), axis=1)
         with open('logio.txt','a') as flog:
             length = str(len(df))
             message = 'Processing df ' + file + ' of length: '+length
