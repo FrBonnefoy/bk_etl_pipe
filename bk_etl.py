@@ -141,6 +141,13 @@ def etl_pipe_bulk(file):
         for x in tqdm(lista_df):
             while True:
                 try:
+                    params = urllib.parse.quote_plus("DRIVER=/opt/microsoft/msodbcsql17/lib64/libmsodbcsql-17.7.so.2.1;"
+                                                     "SERVER=tcp:mkgsupport.database.windows.net;"
+                                                     "DATABASE=mkgsupport;"
+                                                     "UID=mkguser;"
+                                                     "PWD=Usersqlmkg123!")
+
+                    engine = sa.create_engine("mssql+pyodbc:///?odbc_connect={}".format(params))
                     x.to_sql('Booking2021', con=engine, if_exists='append', index=False, method='multi')
                     break
                 except:
