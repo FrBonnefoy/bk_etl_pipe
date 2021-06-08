@@ -14,6 +14,7 @@ import time
 import random
 import urllib
 import sqlalchemy as sa
+from datetime import datetime
 # Some other example server values are
 # server = 'localhost\sqlexpress' # for a named instance
 # server = 'myserver,port' # to specify an alternate port
@@ -139,7 +140,8 @@ def etl_pipe_bulk(file):
         lista_df = split_dataframe(df)
 
         for x in tqdm(lista_df):
-            while True:
+            tries=0
+            while tries<=4:
                 try:
                     params = urllib.parse.quote_plus("DRIVER=/opt/microsoft/msodbcsql17/lib64/libmsodbcsql-17.7.so.2.1;"
                                                      "SERVER=tcp:mkgsupport.database.windows.net;"
@@ -152,7 +154,18 @@ def etl_pipe_bulk(file):
                     break
                 except:
                     time.sleep(5)
+                    tries=+1
                     pass
+
+                if tries==4:
+                    now = datetime.now()
+                    timestamp = datetime.timestamp(now)
+                    timestamp = str(int(timestamp))
+                    filename = '/datadrive/missed/missed_'+timestamp+'.csv'
+                    x.to_csv(filename, sep = '\t', index=False)
+
+
+
 
 for file in tqdm(files):
     etl_pipe_bulk(file)
