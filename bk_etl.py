@@ -153,17 +153,16 @@ def etl_pipe_bulk(file):
                     x.to_sql('Booking2021', con=engine, if_exists='append', index=False, method='multi')
                     break
                 except:
-                    time.sleep(5)
+                    time.sleep(2)
                     tries=+1
-                    pass
 
-                if tries==4:
-                    now = datetime.now()
-                    timestamp = datetime.timestamp(now)
-                    timestamp = str(int(timestamp))
-                    filename = '/datadrive/missed/missed_'+timestamp+'.csv'
-                    x.to_csv(filename, sep = '\t', index=False)
-                    break
+                    if tries==4:
+                        now = datetime.now()
+                        timestamp = datetime.timestamp(now)
+                        timestamp = str(int(timestamp))
+                        filename = '/datadrive/missed/missed_'+timestamp+'.csv'
+                        x.to_csv(filename, sep = '\t', index=False)
+                        break
 
 
 
