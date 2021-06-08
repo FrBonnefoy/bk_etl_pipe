@@ -43,7 +43,7 @@ def fillcountry(x):
     else:
         try:
             return x.split('/')[4].upper()
-        else:
+        except:
             return 'NO COUNTRY/ERROR'
 
 
