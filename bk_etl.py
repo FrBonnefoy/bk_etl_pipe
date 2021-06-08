@@ -10,6 +10,7 @@ from concurrent.futures import ProcessPoolExecutor
 from concurrent.futures import Future
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
+import time
 # Some other example server values are
 # server = 'localhost\sqlexpress' # for a named instance
 # server = 'myserver,port' # to specify an alternate port
@@ -30,6 +31,7 @@ def etl_pipe(file):
     df['PAYS'] = df.apply(lambda x: x['url'].split('/')[4].upper(), axis=1)
 
     for a in range(len(df)):
+        time.sleep(0.3)
         url=str(df.iloc[a]['url'])
         url="'"+url.replace("'",'')+"'"
         name=str(df.iloc[a]['name'])
