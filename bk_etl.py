@@ -32,6 +32,9 @@ def etl_pipe(file):
         cursor = cnxn.cursor()
         df = pd.read_csv(file, sep = '\t')
         df['PAYS'] = df.apply(lambda x: x['url'].split('/')[4].upper(), axis=1)
+        with open('logio.txt','a') as flog:
+            length = str(len(def))
+            message = 'Processing df of length: '+length
 
         for a in range(len(df)):
             time.sleep(random.randint(5,15)/10)
