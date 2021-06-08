@@ -12,6 +12,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
 import time
 import random
+import urllib
+import sqlalchemy as sa
 # Some other example server values are
 # server = 'localhost\sqlexpress' # for a named instance
 # server = 'myserver,port' # to specify an alternate port
@@ -20,6 +22,16 @@ database='mkgsupport'
 username='mkguser'
 password='Usersqlmkg123!'
 driver='/opt/microsoft/msodbcsql17/lib64/libmsodbcsql-17.7.so.2.1'
+
+params = urllib.parse.quote_plus("DRIVER=/opt/microsoft/msodbcsql17/lib64/libmsodbcsql-17.7.so.2.1;"
+                                 "SERVER=tcp:mkgsupport.database.windows.net;"
+                                 "DATABASE=mkgsupport;"
+                                 "UID=mkguser;"
+                                 "PWD=Usersqlmkg123!")
+
+engine = sa.create_engine("mssql+pyodbc:///?odbc_connect={}".format(params))
+
+
 
 
 files= glob2.glob('/datadrive/**/booking16*.csv')
@@ -97,16 +109,23 @@ def etl_pipe(file):
             print(e, file=flog)
             print(query, file=flog)
 
+def etl_pipe_bulk(file):
+    df = pd.read_csv(file, sep = '\t')
+    with open('logio.txt','a') as flog:
+        length = str(len(df))
+        message = 'Processing df ' + file + ' of length: '+length
+        print(message)
+        print(message, file = flog)
+    def fillcountry(x):
+        if x is None:
+            return 'NO COUNTRY/ERROR'
+        else:
+            return x.split('/')[4].upper()
+    df['PAYS'] = df.apply(lambda x: fillcountry(x['url']), axis=1)
 
-with concurrent.futures.ProcessPoolExecutor(max_workers=3) as executor:
-    	future_to_url = {executor.submit(etl_pipe, file): file for file in files}
-    	for future in tqdm(concurrent.futures.as_completed(future_to_url),total=len(files)):
-    		url = future_to_url[future]
-    		try:
-    			data = future.result()
-    		except Exception as exc:
-    			with open('exception.txt',"a") as flog:
-    				print('%r generated an exception: %s' % (url, exc),file=flog)
-    		else:
-    			with open('completed.txt',"a") as flog:
-    				print('%r page is completed' % url,file=flog)
+    df=df.rename(columns={"url": "URL_", "name": "NAME_", "description":"DESCRIPTION_", "review":"REVIEW_", "score":"SCORE_", "number of reviews": "NUMREVIEW_", "type of property":"TYPE_", "address":"ADDRESSE_", "stars":"STARS_", "descdetail": "DESCDETAIL_", "equip":"EQUIP_", "equipdetail": "EQUIPDETAIL_", "lat": "LAT", "long":"LONG", "hotelchain":"HOTELCHAIN", "restaurant": "RESTAURANT", "POIs": "POIS", "Comments":"COMMENTS", "recommend":"RECOMMEND_"})
+
+    df.to_sql('Booking2021', con=engine, if_exists='append', index=False)
+
+for file in files:
+    etl_pipe_bulk(file)
