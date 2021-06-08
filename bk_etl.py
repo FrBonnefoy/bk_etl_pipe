@@ -35,6 +35,8 @@ def etl_pipe(file):
         with open('logio.txt','a') as flog:
             length = str(len(def))
             message = 'Processing df of length: '+length
+            print(message)
+            print(message, file = flog)
 
         for a in range(len(df)):
             time.sleep(random.randint(5,15)/10)
