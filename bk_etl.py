@@ -31,7 +31,7 @@ def etl_pipe(file):
     df['PAYS'] = df.apply(lambda x: x['url'].split('/')[4].upper(), axis=1)
 
     for a in range(len(df)):
-        time.sleep(0.1)
+        time.sleep(0.5)
         url=str(df.iloc[a]['url'])
         url="'"+url.replace("'",'')+"'"
         name=str(df.iloc[a]['name'])
@@ -76,7 +76,7 @@ def etl_pipe(file):
                 print(e, file=flog)
                 print(query, file=flog)
 
-with concurrent.futures.ProcessPoolExecutor(max_workers=5) as executor:
+with concurrent.futures.ProcessPoolExecutor(max_workers=10) as executor:
     	future_to_url = {executor.submit(etl_pipe, file): file for file in files}
     	for future in tqdm(concurrent.futures.as_completed(future_to_url),total=len(files)):
     		url = future_to_url[future]
