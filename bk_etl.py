@@ -23,6 +23,7 @@ driver='/opt/microsoft/msodbcsql17/lib64/libmsodbcsql-17.7.so.2.1'
 
 
 files= glob2.glob('/datadrive/**/booking16*.csv')
+print(files)
 
 def fillcountry(x):
     if x is None:
@@ -32,7 +33,7 @@ def fillcountry(x):
 
 
 def etl_pipe(file):
-    
+
     df = pd.read_csv(file, sep = '\t')
     with open('logio.txt','a') as flog:
         length = str(len(df))
