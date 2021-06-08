@@ -116,16 +116,13 @@ def etl_pipe_bulk(file):
         message = 'Processing df ' + file + ' of length: '+length
         print(message)
         print(message, file = flog)
-    def fillcountry(x):
-        if x is None:
-            return 'NO COUNTRY/ERROR'
-        else:
-            return x.split('/')[4].upper()
-    df['PAYS'] = df.apply(lambda x: fillcountry(x['url']), axis=1)
 
-    df=df.rename(columns={"url": "URL_", "name": "NAME_", "description":"DESCRIPTION_", "review":"REVIEW_", "score":"SCORE_", "number of reviews": "NUMREVIEW_", "type of property":"TYPE_", "address":"ADDRESSE_", "stars":"STARS_", "descdetail": "DESCDETAIL_", "equip":"EQUIP_", "equipdetail": "EQUIPDETAIL_", "lat": "LAT", "long":"LONG", "hotelchain":"HOTELCHAIN", "restaurant": "RESTAURANT", "POIs": "POIS", "Comments":"COMMENTS", "recommend":"RECOMMEND_"})
+    if len(df)>0:
+        df['PAYS'] = df.apply(lambda x: fillcountry(x['url']), axis=1)
 
-    df.to_sql('Booking2021', con=engine, if_exists='append', index=False)
+        df=df.rename(columns={"url": "URL_", "name": "NAME_", "description":"DESCRIPTION_", "review":"REVIEW_", "score":"SCORE_", "number of reviews": "NUMREVIEW_", "type of property":"TYPE_", "address":"ADDRESSE_", "stars":"STARS_", "descdetail": "DESCDETAIL_", "equip":"EQUIP_", "equipdetail": "EQUIPDETAIL_", "lat": "LAT", "long":"LONG", "hotelchain":"HOTELCHAIN", "restaurant": "RESTAURANT", "POIs": "POIS", "Comments":"COMMENTS", "recommend":"RECOMMEND_"})
+
+        df.to_sql('Booking2021', con=engine, if_exists='append', index=False)
 
 for file in tqdm(files):
     etl_pipe_bulk(file)
