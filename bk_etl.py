@@ -139,6 +139,8 @@ def etl_pipe_bulk(file):
 
         lista_df = split_dataframe(df)
 
+        lista_df = lista_df[29:]
+
         for x in tqdm(lista_df):
             tries=0
             while tries<=4:
