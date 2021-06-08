@@ -138,7 +138,7 @@ def etl_pipe_bulk(file):
 
         lista_df = split_dataframe(df)
 
-        for x in lista_df:
+        for x in tqdm(lista_df):
 
             x.to_sql('Booking2021', con=engine, if_exists='append', index=False, method='multi')
 
