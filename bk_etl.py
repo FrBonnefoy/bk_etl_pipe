@@ -5,6 +5,11 @@ import glob
 import numpy as np
 from tqdm.notebook import tqdm
 import glob2
+import concurrent.futures
+from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import Future
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from tqdm import tqdm
 # Some other example server values are
 # server = 'localhost\sqlexpress' # for a named instance
 # server = 'myserver,port' # to specify an alternate port
@@ -68,3 +73,16 @@ def etl_pipe(file):
             with open('logsql.txt','a') as flog:
                 print(e, file=flog)
                 print(query, file=flog)
+
+with concurrent.futures.ProcessPoolExecutor(max_workers=10) as executor:
+    	future_to_url = {executor.submit(etl_pipe, file): file for file in files}
+    	for future in tqdm(concurrent.futures.as_completed(future_to_url),total=len(files)):
+    		url = future_to_url[future]
+    		try:
+    			data = future.result()
+    		except Exception as exc:
+    			with open('exception.txt',"a") as flog:
+    				print('%r generated an exception: %s' % (url, exc),file=flog)
+    		else:
+    			with open('completed.txt',"a") as flog:
+    				print('%r page is completed' % url,file=flog)
