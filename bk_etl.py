@@ -41,7 +41,10 @@ def fillcountry(x):
     if x is None:
         return 'NO COUNTRY/ERROR'
     else:
-        return x.split('/')[4].upper()
+        try:
+            return x.split('/')[4].upper()
+        else:
+            return 'NO COUNTRY/ERROR'
 
 
 def etl_pipe(file):
