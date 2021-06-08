@@ -32,7 +32,7 @@ def etl_pipe(file):
     df['PAYS'] = df.apply(lambda x: x['url'].split('/')[4].upper(), axis=1)
 
     for a in range(len(df)):
-        time.sleep(random.randint(4,12)/10)
+        time.sleep(random.randint(5,15)/10)
         url=str(df.iloc[a]['url'])
         url="'"+url.replace("'",'')+"'"
         name=str(df.iloc[a]['name'])
