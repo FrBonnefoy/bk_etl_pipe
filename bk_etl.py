@@ -38,7 +38,7 @@ files= glob2.glob('/datadrive/**/booking16*.csv')
 print(files)
 print('\n\n')
 
-def split_dataframe(df, chunk_size = 100):
+def split_dataframe(df, chunk_size = 200):
     chunks = list()
     num_chunks = len(df) // chunk_size + 1
     for i in range(num_chunks):
@@ -139,8 +139,13 @@ def etl_pipe_bulk(file):
         lista_df = split_dataframe(df)
 
         for x in tqdm(lista_df):
-
-            x.to_sql('Booking2021', con=engine, if_exists='append', index=False, method='multi')
+            while True:
+                try:
+                    x.to_sql('Booking2021', con=engine, if_exists='append', index=False, method='multi')
+                    break
+                except:
+                    time.sleep(5)
+                    pass
 
 for file in tqdm(files):
     etl_pipe_bulk(file)
