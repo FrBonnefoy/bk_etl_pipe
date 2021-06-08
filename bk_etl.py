@@ -74,7 +74,7 @@ def etl_pipe(file):
                 print(e, file=flog)
                 print(query, file=flog)
 
-with concurrent.futures.ProcessPoolExecutor(max_workers=10) as executor:
+with concurrent.futures.ProcessPoolExecutor(max_workers=4) as executor:
     	future_to_url = {executor.submit(etl_pipe, file): file for file in files}
     	for future in tqdm(concurrent.futures.as_completed(future_to_url),total=len(files)):
     		url = future_to_url[future]
