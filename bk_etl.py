@@ -36,6 +36,7 @@ engine = sa.create_engine("mssql+pyodbc:///?odbc_connect={}".format(params))
 
 
 files= glob2.glob('/datadrive/**/booking16*.csv')
+files = files[29:]
 print(files)
 print('\n\n')
 
@@ -138,8 +139,6 @@ def etl_pipe_bulk(file):
         df=df.rename(columns={"url": "URL_", "name": "NAME_", "description":"DESCRIPTION_", "review":"REVIEW_", "score":"SCORE_", "number of reviews": "NUMREVIEW_", "type of property":"TYPE_", "address":"ADDRESSE_", "stars":"STARS_", "descdetail": "DESCDETAIL_", "equip":"EQUIP_", "equipdetail": "EQUIPDETAIL_", "lat": "LAT", "long":"LONG", "hotelchain":"HOTELCHAIN", "restaurant": "RESTAURANT", "POIs": "POIS", "Comments":"COMMENTS", "recommend":"RECOMMEND_"})
 
         lista_df = split_dataframe(df)
-
-        lista_df = lista_df[29:]
 
         for x in tqdm(lista_df):
             tries=0
