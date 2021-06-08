@@ -36,6 +36,16 @@ engine = sa.create_engine("mssql+pyodbc:///?odbc_connect={}".format(params))
 
 files= glob2.glob('/datadrive/**/booking16*.csv')
 print(files)
+print('\n\n')
+
+def split_dataframe(df, chunk_size = 100):
+    chunks = list()
+    num_chunks = len(df) // chunk_size + 1
+    for i in range(num_chunks):
+        chunks.append(df[i*chunk_size:(i+1)*chunk_size])
+    return chunks
+
+
 
 def fillcountry(x):
     if x is None:
@@ -114,6 +124,7 @@ def etl_pipe(file):
 
 def etl_pipe_bulk(file):
     df = pd.read_csv(file, sep = '\t')
+
     with open('logio.txt','a') as flog:
         length = str(len(df))
         message = 'Processing df ' + file + ' of length: '+length
@@ -125,7 +136,11 @@ def etl_pipe_bulk(file):
 
         df=df.rename(columns={"url": "URL_", "name": "NAME_", "description":"DESCRIPTION_", "review":"REVIEW_", "score":"SCORE_", "number of reviews": "NUMREVIEW_", "type of property":"TYPE_", "address":"ADDRESSE_", "stars":"STARS_", "descdetail": "DESCDETAIL_", "equip":"EQUIP_", "equipdetail": "EQUIPDETAIL_", "lat": "LAT", "long":"LONG", "hotelchain":"HOTELCHAIN", "restaurant": "RESTAURANT", "POIs": "POIS", "Comments":"COMMENTS", "recommend":"RECOMMEND_"})
 
-        df.to_sql('Booking2021', con=engine, if_exists='append', chunksize=100, index=False, method='multi')
+        lista_df = split_dataframe(df)
+
+        for x in lista_df:
+
+            x.to_sql('Booking2021', con=engine, if_exists='append', index=False, method='multi')
 
 for file in tqdm(files):
     etl_pipe_bulk(file)
