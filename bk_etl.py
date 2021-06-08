@@ -125,7 +125,7 @@ def etl_pipe_bulk(file):
 
         df=df.rename(columns={"url": "URL_", "name": "NAME_", "description":"DESCRIPTION_", "review":"REVIEW_", "score":"SCORE_", "number of reviews": "NUMREVIEW_", "type of property":"TYPE_", "address":"ADDRESSE_", "stars":"STARS_", "descdetail": "DESCDETAIL_", "equip":"EQUIP_", "equipdetail": "EQUIPDETAIL_", "lat": "LAT", "long":"LONG", "hotelchain":"HOTELCHAIN", "restaurant": "RESTAURANT", "POIs": "POIS", "Comments":"COMMENTS", "recommend":"RECOMMEND_"})
 
-        df.to_sql('Booking2021', con=engine, if_exists='append', index=False, method='multi')
+        df.to_sql('Booking2021', con=engine, if_exists='append', chunksize=10000, index=False, method='multi')
 
 for file in tqdm(files):
     etl_pipe_bulk(file)
