@@ -127,5 +127,5 @@ def etl_pipe_bulk(file):
 
     df.to_sql('Booking2021', con=engine, if_exists='append', index=False)
 
-for file in files:
+for file in tqdm(files):
     etl_pipe_bulk(file)
