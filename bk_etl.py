@@ -34,7 +34,7 @@ def etl_pipe(file):
         df['PAYS'] = df.apply(lambda x: x['url'].split('/')[4].upper(), axis=1)
         with open('logio.txt','a') as flog:
             length = str(len(df))
-            message = 'Processing df ' + file ' of length: '+length
+            message = 'Processing df ' + file + ' of length: '+length
             print(message)
             print(message, file = flog)
         if len(df)>0:
