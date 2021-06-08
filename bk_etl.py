@@ -39,7 +39,7 @@ files= glob2.glob('/datadrive/**/booking16*.csv')
 print(files)
 print('\n\n')
 
-def split_dataframe(df, chunk_size = 50):
+def split_dataframe(df, chunk_size = 75):
     chunks = list()
     num_chunks = len(df) // chunk_size + 1
     for i in range(num_chunks):
