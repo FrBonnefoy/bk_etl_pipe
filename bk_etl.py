@@ -33,16 +33,17 @@ def fillcountry(x):
 
 def etl_pipe(file):
 
+    with open('logio.txt','a') as flog:
+        length = str(len(df))
+        message = 'Processing df ' + file + ' of length: '+length
+        print(message)
+        print(message, file = flog)
     try:
         cnxn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
         cursor = cnxn.cursor()
         df = pd.read_csv(file, sep = '\t')
         df['PAYS'] = df.apply(lambda x: fillcountry(x['url']), axis=1)
-        with open('logio.txt','a') as flog:
-            length = str(len(df))
-            message = 'Processing df ' + file + ' of length: '+length
-            print(message)
-            print(message, file = flog)
+
         if len(df)>0:
             for a in range(len(df)):
                 time.sleep(random.randint(5,15)/10)
