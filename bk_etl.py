@@ -36,7 +36,7 @@ engine = sa.create_engine("mssql+pyodbc:///?odbc_connect={}".format(params))
 
 
 files= glob2.glob('/datadrive/**/booking16*.csv')
-files = files[29:]
+files = files[33:]
 print(files)
 print('\n\n')
 
@@ -62,7 +62,7 @@ def fillcountry(x):
 def etl_pipe(file):
 
     df = pd.read_csv(file, sep = '\t')
-    
+
     with open('logio.txt','a') as flog:
         length = str(len(df))
         message = 'Processing df ' + file + ' of length: '+length
